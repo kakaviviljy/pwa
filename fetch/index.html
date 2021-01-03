@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+
+</body>
+<script>
+    //window对象上有fetch属性
+    fetch('./data.json').then(res => {
+        //res是请求得到的响应内容，二进制的流
+        //调用res.json()方法把json格式的数据=》变成json格式，返回的是一个promise
+        return res.json()
+    }).then((res) => {
+        console.log(res);
+
+    })
+</script>
+
+</html>

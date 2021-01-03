@@ -1,0 +1,17 @@
+{
+
+    "?name": "应用名称，用户安装横幅提示名称，启动画面中文字",
+    "name": "电影app-pwa",
+    "short_name": "电影app",
+    "start_url": "/index.html",
+    "icon": [{
+        "src": "img/icon.jpg",
+        "size": "144*144",
+        "type": "image/jpg"
+    }],
+    "background_color": "skyblue",
+    "theme_color": "red",
+    "display": "standalone"
+
+
+}
