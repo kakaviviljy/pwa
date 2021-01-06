@@ -9,18 +9,39 @@
 </head>
 
 <body>
-
+    <button id="btn1">js</button>
+    <button id="btn2">worker</button>
+    <input type="text">
 </body>
 <script>
-    console.log('start');
-    //创建一个web worker
-    const worker = new Worker('work.js')
-    worker.addEventListener('message', e => {
-        console.log(e.data);
+    if (window.Worker) {
 
-    })
+        const btn1 = document.getElementById('btn1');
+        const btn2 = document.getElementById('btn2');
 
-    console.log('end');
+        btn1.addEventListener('click', function() {
+            console.log('start');
+            let total = 1;
+            for (let i = 0; i < 5000000000; i++) {
+                total += i;
+            }
+            console.log('total', total);
+            console.log('end');
+        })
+
+
+        const myWorker = new Worker('work.js');
+        myWorker.onmessage = function(e) {
+            console.log('total', e.data);
+        };
+        btn2.addEventListener('click', function() {
+            console.log('start');
+            myWorker.postMessage('total');
+            console.log('end');
+        });
+
+
+    }
 </script>
 
 </html>

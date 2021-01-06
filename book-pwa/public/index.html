@@ -16,5 +16,35 @@
     </main>
     <script type="text/javascript" src="./index.js"></script>
 </body>
+<script>
+    //用户没有授权，提示用户授权
+    if (Notification.permission === 'default') {
+        Notification.requestPermission()
+    }
+    //如果页面一进来，用户没有网，给用户一个通知
+    if (!navigator.onLine) {
+        new Notification('提示', {
+            body: '你当前没有网络，访问的是缓存'
+        })
+    }
+    //监听用户连上网了
+    window.addEventListener('online', () => {
+            new Notification('提示', {
+                body: '已经连上网了，可以刷新获取最新数据'
+            })
+        })
+        //监听有没有收到sw更新的通知，有就刷新页面
+    if ('serviceWorker' in navigator) {
+        let refreshing = false
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            if (refreshing) {
+                return
+            }
+            refreshing = true;
+            console.log('sw更新了');
+            //window.location.reload();
+        });
+    }
+</script>
 
 </html>

@@ -1,5 +1,5 @@
 //主要缓存内容
-const CACHE_NAME = 'cache_v1'
+const CACHE_NAME = 'cache_v8'
 const URLS = [
     '/',
     '/index.js',
@@ -36,7 +36,6 @@ self.addEventListener('activate', async event => {
 
     })
     //请求发送的时候会触发
-    //判断资源是否能够请求成功，如果能够请求成功，就响应成功结果，如果断网了，就读取缓存资源
     /**
      * 静态数据缓存优先，接口数据网络优先
      * 只缓存同源的内容
@@ -68,23 +67,25 @@ async function cacheFirst(req) {
     if (cached) {
         return cached
     } else {
-        const fresh = await fetch(req)
-        return fresh
+        const res = await fetch(req)
+        return res
     }
 }
 //网络优先
 async function networkFirst(req) {
     const cache = await caches.open(CACHE_NAME)
     try {
-        const fresh = await fetch(req)
-            //更新最新的数据到缓存中,把响应的备份存储到缓存中
-        cache.put(req, fresh.clone())
-            //把最新的响应返回给浏览器
-        return fresh
+        const res = await fetch(req)
+            // 请求失败，直接返回失败的结果
+        if (!res || res.status !== 200) {
+            return res;
+        }
+        // 请求成功的话，把响应的备份存储到缓存中
+        cache.put(req, res.clone())
+        return res
 
     } catch (e) {
         //如果fetch失败，从缓存中读取
-
         const cached = await cache.match(req)
         return cached
 

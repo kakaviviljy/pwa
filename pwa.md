@@ -1,63 +1,31 @@
-一个标准的pwa必须包含3个部分
-
-https服务器或者http://localhost
-
-manifest.json
-
-service worker
 
 
+## web worker
 
-一、manifest
+​      Web Worker (工作线程) 是 HTML5 中提出的概念，分为两种类型：
 
-```
-{
-  "name": "HackerWeb",
-  "short_name": "HackerWeb",
-  "start_url": ".",
-  "display": "standalone",
-  "background_color": "#fff",
-  "description": "A simply readable Hacker News app.",
-  "icons": [{
-    "src": "images/touch/homescreen48.png",
-    "sizes": "48x48",
-    "type": "image/png"
-  }, {
-    "src": "images/touch/homescreen72.png",
-    "sizes": "72x72",
-    "type": "image/png"
-  }, {
-    "src": "images/touch/homescreen96.png",
-    "sizes": "96x96",
-    "type": "image/png"
-  }, {
-    "src": "images/touch/homescreen144.png",
-    "sizes": "144x144",
-    "type": "image/png"
-  }, {
-    "src": "images/touch/homescreen168.png",
-    "sizes": "168x168",
-    "type": "image/png"
-  }, {
-    "src": "images/touch/homescreen192.png",
-    "sizes": "192x192",
-    "type": "image/png"
-  }],
-}
-```
+     1. 专用线程（Dedicated Web Worker） ：专用线程仅能被创建它的脚本所使用（一个专用线程对应一个主线程），浏览器支持97%
+        2. 共享线程（Shared Web Worker）：而共享线程能够在不同的脚本中使用（一个共享线程对应多个主线程）。浏览器支持35%，共享线程在传递消息之前，端口必须处于打开状态
 
-display模式：
+   需要注意的点
 
-| 显示模式     | 描述                                                         |
-| :----------- | :----------------------------------------------------------- |
-| `fullscreen` | 全屏显示, 所有可用的显示区域都被使用, 并且不显示状态栏[chrome](https://developer.mozilla.org/en-US/docs/Glossary/chrome)。 |
-| `standalone` | 让这个应用看起来像一个独立的应用程序，包括具有不同的窗口，在应用程序启动器中拥有自己的图标等。这个模式中，用户代理将移除用于控制导航的UI元素，但是可以包括其他UI元素，例如状态栏。 |
-| `minimal-ui` | 该应用程序将看起来像一个独立的应用程序，但会有浏览器地址栏。 样式因浏览器而异。 |
-| `browser`    | 该应用程序在传统的浏览器标签或新窗口中打开，具体实现取决于浏览器和平台。 这是默认的设置。 |
+- 有同源限制
 
+- 无法访问 DOM 节点，运行在另一个上下文中，无法使用Window对象
 
+- Web Worker 的运行不会影响主线程，但与主线程交互时仍受到主线程单线程的瓶颈制约。换言之，如果 Worker 线程频繁与主线程进行交互，主线程由于需要处理交互，仍有可能使页面发生阻塞
 
-## 二、service worker
+  
+
+##  fetch api
+
+1. 基于promise实现，service worker无法使用XMLhttpRequest
+
+2. response是一个二级制数据流，需要调用json()方法转化成json数据
+
+   
+
+## service worker
 
    一个独立的worker线程，独立于当前网页进程，是一个常驻在浏览器中的 JS 线程，不能直接操作页面 DOM。但可以通过事件机制来处理，例如使用postMessage。
 
@@ -65,9 +33,8 @@ display模式：
 
 **对比：**
 
-web worker：
+web worker：通过消息机制完成主线程和worker线程之间的数据通信。
 
-1. 只能服务于新建它的页面，不同页面之间不能共享同一个 Web Worker。
 2. 当页面关闭时，该页面新建的 Web Worker 也会随之关闭，不会常驻在浏览器中。每次做的事情的结果不能被持久化存下来，如果下次有同样的复杂操作，还得费时重新来一遍
 
 service worker:
@@ -92,7 +59,7 @@ service worker:
 
 **作用域：**
 
-1. 注册的时候可以指定{scope:"/demo"}
+1. 注册的时候可以指定{scope:"/demo"}，只会拦截`demo`目录下的`fetch`事件，但是在下面提到的`cache.addAll`仍然可以缓存`/`下面的`index.html`的内容。
 
 
 
@@ -158,14 +125,11 @@ service worker:
 
      https://blog.csdn.net/weixin_34245082/article/details/91426966
 
-##  三、fetch api
-
-1. 基于promise实现，service worker无法使用XMLhttpRequest
-2. response是一个二级制数据流，需要调用json()方法转化成json数据
 
 
 
-## 四、cache storage
+
+## cache storage
 
  cacheStorage接口表示cache对象的存储，配合service worker来实现资源的缓存
 
@@ -189,7 +153,68 @@ cache.match(req),获取req对应的response
 
 
 
-## 五、开发工具：
+## pwa
+
+一个标准的pwa必须包含3个部分
+
+https服务器或者http://localhost
+
+manifest.json
+
+service worker
+
+
+
+一、manifest
+
+```
+{
+  "name": "HackerWeb",
+  "short_name": "HackerWeb",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#fff",
+  "description": "A simply readable Hacker News app.",
+  "icons": [{
+    "src": "images/touch/homescreen48.png",
+    "sizes": "48x48",
+    "type": "image/png"
+  }, {
+    "src": "images/touch/homescreen72.png",
+    "sizes": "72x72",
+    "type": "image/png"
+  }, {
+    "src": "images/touch/homescreen96.png",
+    "sizes": "96x96",
+    "type": "image/png"
+  }, {
+    "src": "images/touch/homescreen144.png",
+    "sizes": "144x144",
+    "type": "image/png"
+  }, {
+    "src": "images/touch/homescreen168.png",
+    "sizes": "168x168",
+    "type": "image/png"
+  }, {
+    "src": "images/touch/homescreen192.png",
+    "sizes": "192x192",
+    "type": "image/png"
+  }],
+}
+```
+
+display模式：
+
+| 显示模式     | 描述                                                         |
+| :----------- | :----------------------------------------------------------- |
+| `fullscreen` | 全屏显示, 所有可用的显示区域都被使用, 并且不显示状态栏[chrome](https://developer.mozilla.org/en-US/docs/Glossary/chrome)。 |
+| `standalone` | 让这个应用看起来像一个独立的应用程序，包括具有不同的窗口，在应用程序启动器中拥有自己的图标等。这个模式中，用户代理将移除用于控制导航的UI元素，但是可以包括其他UI元素，例如状态栏。 |
+| `minimal-ui` | 该应用程序将看起来像一个独立的应用程序，但会有浏览器地址栏。 样式因浏览器而异。 |
+| `browser`    | 该应用程序在传统的浏览器标签或新窗口中打开，具体实现取决于浏览器和平台。 这是默认的设置。 |
+
+
+
+## 开发工具：
 
 1. sw-precache 预缓存，集成了sw-toolbox
    * app shell 所需静态资源
@@ -223,16 +248,6 @@ cache.match(req),获取req对应的response
 
 
 
-
-
-
-三、CacheStorage
-
-为了能够精细地、可编程地控制缓存，[CacheStorage](https://developer.mozilla.org/en-US/docs/Web/API/CacheStorage) 被设计出来。有了它，就**可以用 JS 对缓存进行增删改查**，你也可以在 Chrome 的 DevTools 里面直观地查看。对于传统的 Header 缓存，你是没法知道有哪些缓存，更加没法对缓存进行操作的。你只能被动地修改 URL 让浏览器抛弃旧的缓存，使用新的资源。
-
-[![image](https://user-gold-cdn.xitu.io/2018/2/7/1616f0a2d7d73b14?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)](https://user-images.githubusercontent.com/8401872/35846222-a28ddd34-0b50-11e8-9363-6607c79645f6.png)
-
-PS：CacheStorage 并非只有在 Service Worker 中才能用，它是一个全局性的 API，你在控制台中也可以访问到 caches 全局变量。
 
 
 
